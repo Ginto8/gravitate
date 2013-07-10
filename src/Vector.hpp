@@ -5,6 +5,8 @@
 
 template<class T,int N>
 struct Vector {
+    static Vector ZERO;
+
     T values[N];
 
     Vector& operator +=(const Vector& v) {
@@ -66,6 +68,8 @@ struct Vector {
         return std::sqrt(this->magSquared());
     }
 };
+template<class T,int N>
+Vector<T,N> Vector<T,N>::ZERO;
 
 template<class T,int N>
 Vector<T,N> operator*(T s,Vector<T,N> v) {

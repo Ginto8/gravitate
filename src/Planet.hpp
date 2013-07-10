@@ -1,8 +1,9 @@
 #ifndef PLANET_HPP
 #define PLANET_HPP
 
+#include <cstdlib>
 #include <cmath>
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics.hpp>
 #include "Vector.hpp"
 
 struct Planet : public sf::Drawable {
@@ -17,8 +18,10 @@ struct Planet : public sf::Drawable {
         mass(_mass),loc(_loc),vel(_vel),drawUnfilled(false) {}
 
     float radius() const {
-        return SIZE_SCALAR*std::log10(mass);
+        return SIZE_SCALAR*std::max(1.0f,std::log(mass));
     }
+
+    sf::Color color() const;
 
     void draw(sf::RenderTarget& target,sf::RenderStates states) const;
 };
