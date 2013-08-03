@@ -12,6 +12,9 @@ const float START_MASS = 100;
 const float MAX_MASS   = 10e4;
 const float VEL_SCALAR = 0.5;
 
+const int INITIAL_WIDTH  = 640,
+          INITIAL_HEIGHT = 480;
+
 Vec2f randomVec(float maxMag) {
     float angle = std::rand()/(float)RAND_MAX*2*M_PI;
     Vec2f norm = {std::cos(angle),std::sin(angle)};
@@ -25,7 +28,7 @@ void makeVelLine(const Planet& planet,sf::VertexArray& line) {
 
 int main() {
     PlanetSystem system;
-    sf::RenderWindow window(sf::VideoMode(640,480),"Gravity");
+    sf::RenderWindow window(sf::VideoMode(INITIAL_WIDTH,INITIAL_HEIGHT),"Gravity");
 
     Planet planetToAdd(START_MASS,Vec2f::ZERO,Vec2f::ZERO);
     planetToAdd.drawUnfilled = true;
@@ -38,6 +41,11 @@ int main() {
     velLineTmp.setPrimitiveType(sf::Lines);
     velLineTmp[0].color = velLineTmp[1].color = sf::Color::Blue;
 
+    sf::View camera(sf::FloatRect(0,0,INITIAL_WIDTH,INITIAL_HEIGHT));
+
+    sf::Vector2f prevMouseLoc;
+    bool movingCamera = false;
+
     bool running = true;
 
     window.setFramerateLimit(FPS);
@@ -49,11 +57,7 @@ int main() {
                 window.close();
                 break;
             case sf::Event::Resized:
-                {
-                    sf::View v(sf::FloatRect(0,0,event.size.width,
-                                             event.size.height));
-                    window.setView(v);
-                }
+                camera.setSize(event.size.width,event.size.height);
                 break;
             case sf::Event::MouseWheelMoved:
                 {
@@ -80,15 +84,30 @@ int main() {
                 break;
             }
         }
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            sf::Vector2f mouseLoc = sf::Vector2f(sf::Mouse::getPosition(window));
+            if(!movingCamera) {
+                movingCamera = true;
+            } else {
+                camera.move(prevMouseLoc-mouseLoc)
+            }
+            prevMouseLoc = mouseLoc;
+        } else {
+            movingCamera = false;
+        }
+
+        sf::Vector2f worldOffset = camera.getCenter()-camera.getSize()/2;
+
         bool drawVelLine = false;
         if(!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             sf::Vector2i mouseLoc = sf::Mouse::getPosition(window);
-            planetToAdd.loc[0] = mouseLoc.x;
-            planetToAdd.loc[1] = mouseLoc.y;
-            velLine[0].position = sf::Vector2f(mouseLoc);
+            planetToAdd.loc[0] = worldOffset.x+mouseLoc.x;
+            planetToAdd.loc[1] = worldOffset.x+mouseLoc.y;
+            velLine[0].position = worldOffset+sf::Vector2f(mouseLoc);
         } else {
             drawVelLine = true;
-            velLine[1].position = sf::Vector2f(sf::Mouse::getPosition(window));
+            velLine[1].position = worldOffset
+                                  +sf::Vector2f(sf::Mouse::getPosition(window));
             planetToAdd.vel[0] = velLine[1].position.x - velLine[0].position.x;
             planetToAdd.vel[1] = velLine[1].position.y - velLine[0].position.y;
             planetToAdd.vel *= VEL_SCALAR;
@@ -97,6 +116,8 @@ int main() {
             system.tick(DT);
         }
         window.clear(sf::Color::Black);
+
+        window.setView(camera);
 
         window.draw(system);
 
