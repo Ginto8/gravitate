@@ -89,20 +89,20 @@ int main() {
             if(!movingCamera) {
                 movingCamera = true;
             } else {
-                camera.move(prevMouseLoc-mouseLoc)
+                camera.move(prevMouseLoc-mouseLoc);
             }
             prevMouseLoc = mouseLoc;
         } else {
             movingCamera = false;
         }
 
-        sf::Vector2f worldOffset = camera.getCenter()-camera.getSize()/2;
+        sf::Vector2f worldOffset = camera.getCenter()-camera.getSize()/2.0f;
 
         bool drawVelLine = false;
         if(!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             sf::Vector2i mouseLoc = sf::Mouse::getPosition(window);
             planetToAdd.loc[0] = worldOffset.x+mouseLoc.x;
-            planetToAdd.loc[1] = worldOffset.x+mouseLoc.y;
+            planetToAdd.loc[1] = worldOffset.y+mouseLoc.y;
             velLine[0].position = worldOffset+sf::Vector2f(mouseLoc);
         } else {
             drawVelLine = true;

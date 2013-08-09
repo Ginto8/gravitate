@@ -26,12 +26,12 @@ sf::Color Planet::color() const {
             float diff = (colorScheme[i+1].value
                           -colorScheme[i].value);
             float factor = (mass-colorScheme[i].value)/diff;
-            float color1[] = { colorScheme[i].color.r,
-                               colorScheme[i].color.g,
-                               colorScheme[i].color.b },
-                  color2[] = { colorScheme[i+1].color.r,
-                               colorScheme[i+1].color.g,
-                               colorScheme[i+1].color.b };
+            float color1[] = { (float)colorScheme[i].color.r,
+                               (float)colorScheme[i].color.g,
+                               (float)colorScheme[i].color.b },
+                  color2[] = { (float)colorScheme[i+1].color.r,
+                               (float)colorScheme[i+1].color.g,
+                               (float)colorScheme[i+1].color.b };
             for(int j=0;j<3;++j) {
                 color1[j] += factor*(color2[j]-color1[j]);
             }
