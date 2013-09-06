@@ -5,6 +5,10 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // M_PI
+
 const float FPS = 60;
 const float DT  = 1/FPS;
 
