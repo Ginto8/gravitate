@@ -19,6 +19,8 @@ add_executable(${EXECUTABLE_NAME}
     src/PlanetSystem.cpp
     src/PlanetSystem.hpp
     src/Vector.hpp
+    src/Perlin.cpp
+    src/Perlin.hpp
 )
 
 set(SFML_STATIC_LIBRARIES TRUE)

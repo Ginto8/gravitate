@@ -1,11 +1,13 @@
 #include "PlanetSystem.hpp"
+#include "Perlin.hpp"
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include <cctype>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-#ifndef M_PI
+#ifndef M_P
 #define M_PI 3.14159265358979323846
 #endif // M_PI
 
@@ -18,6 +20,8 @@ const float VEL_SCALAR = 0.5;
 
 const int INITIAL_WIDTH  = 640,
           INITIAL_HEIGHT = 480;
+const float PERLIN_WIDTH  = INITIAL_WIDTH /15.0,
+            PERLIN_HEIGHT = INITIAL_HEIGHT/15.0;
 
 Vec2f randomVec(float maxMag) {
     float angle = std::rand()/(float)RAND_MAX*2*M_PI;
@@ -30,7 +34,28 @@ void makeVelLine(const Planet& planet,sf::VertexArray& line) {
     line[1].position = sf::Vector2f(line[0].position.x+planet.vel[0]/VEL_SCALAR,line[0].position.y+planet.vel[1]/VEL_SCALAR);
 }
 
+void printControls() {
+    std::cout << "Controls:\n"
+              << "  <Left-Click>:                 Place body\n"
+              << "  <Left-Click>,  drag, release: Place body with initial velocity\n"
+              << "  <Scroll-Up>/<Scroll-Down>:    Increase/decrease body mass\n"
+              << "  <Middle-Click>:               Delete all bodies\n"
+              << "  <Right-Click>, drag:          Move camera\n"
+              << "  <Space>:                      Toggle trail-drawing\n"
+              << "  <P>:                          Pause/unpause" << std::endl;
+}
+
 int main() {
+    std::string nebulaResponse;
+    std::cout << "Start with nebula? [y/N] ";
+    std::getline(std::cin,nebulaResponse);
+    bool makeNebula = (!nebulaResponse.empty() &&
+                       std::tolower(nebulaResponse[0]) == 'y');
+    std::cout << std::endl;
+
+    printControls();
+
+    Perlin perlin{PERLIN_WIDTH,PERLIN_HEIGHT};
     PlanetSystem system;
     sf::RenderWindow window(sf::VideoMode(INITIAL_WIDTH,INITIAL_HEIGHT),"Gravity");
 
@@ -52,8 +77,24 @@ int main() {
 
     bool running = true;
 
+    system.setDrawingTrails(true);
+    if(makeNebula) {
+        for(int x=0;x<20;x++) {
+            for(int y=0;y<20;y++) {
+                Vec2f loc = {{x/20.0*INITIAL_WIDTH,
+                              y/20.0*INITIAL_HEIGHT}};
+                Vec2f perlinLoc = {{loc[0]/(float)INITIAL_WIDTH*PERLIN_WIDTH,
+                                    loc[1]/(float)INITIAL_HEIGHT*PERLIN_HEIGHT}};
+                double noise = perlin.octaveNoise(perlinLoc[0],perlinLoc[1]);
+                Planet p{40+noise*60,loc,randomVec(40)};
+                system.addPlanet(p);
+            }
+        }
+    }
+
     window.setFramerateLimit(FPS);
     while(window.isOpen()) {
+        //std::cout << "tick\n";
         sf::Event event;
         while(window.pollEvent(event)) {
             switch(event.type) {
