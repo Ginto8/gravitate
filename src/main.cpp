@@ -81,8 +81,8 @@ int main() {
     if(makeNebula) {
         for(int x=0;x<20;x++) {
             for(int y=0;y<20;y++) {
-                Vec2f loc = {{x/20.0*INITIAL_WIDTH,
-                              y/20.0*INITIAL_HEIGHT}};
+                Vec2f loc = {{(float)(x/20.0*INITIAL_WIDTH),
+                              (float)(y/20.0*INITIAL_HEIGHT)}};
                 Vec2f perlinLoc = {{loc[0]/(float)INITIAL_WIDTH*PERLIN_WIDTH,
                                     loc[1]/(float)INITIAL_HEIGHT*PERLIN_HEIGHT}};
                 double noise = perlin.octaveNoise(perlinLoc[0],perlinLoc[1]);
