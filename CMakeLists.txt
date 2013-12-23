@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.6)
 project(gravitate)
 
-set(CMAKE_MODULE_PATH 
-    "/usr/local/share/SFML/cmake/Modules/;${CMAKE_MODULE_PATH}")
+#set(CMAKE_MODULE_PATH 
+#    "/usr/local/share/SFML/cmake/Modules/;${CMAKE_MODULE_PATH}")
 
 # Enable debug symbols by default
 if(CMAKE_BUILD_TYPE STREQUAL "")
   set(CMAKE_BUILD_TYPE Debug)
 endif()
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall ${CMAKE_CXX_FLAGS}")
 # (you can also set it on the command line: -D CMAKE_BUILD_TYPE=Release)
 
 # Define sources and executable
@@ -23,7 +24,7 @@ add_executable(${EXECUTABLE_NAME}
     src/Perlin.hpp
 )
 
-set(SFML_STATIC_LIBRARIES TRUE)
+#set(SFML_STATIC_LIBRARIES TRUE)
 
 # Detect and add SFML
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
@@ -33,7 +34,7 @@ if(WIN32)
     set(main ${SFML_MODULES})
 endif()
 
-find_package(SFML 2 COMPONENTS ${SFML_MODULES} REQUIRED)
+find_package(SFML 2 REQUIRED ${SFML_MODULES})
 message(STATUS "Libraries [${SFML_LIBRARIES}]")
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
