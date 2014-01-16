@@ -25,7 +25,7 @@ const float PERLIN_WIDTH  = INITIAL_WIDTH /15.0,
 
 Vec2f randomVec(float maxMag) {
     float angle = std::rand()/(float)RAND_MAX*2*M_PI;
-    Vec2f norm = {std::cos(angle),std::sin(angle)};
+    Vec2f norm = {{std::cos(angle),std::sin(angle)}};
     return std::rand()/(float)RAND_MAX*maxMag*norm;
 }
 
@@ -55,7 +55,7 @@ int main() {
 
     printControls();
 
-    Perlin perlin{PERLIN_WIDTH,PERLIN_HEIGHT};
+    Perlin perlin{(int)PERLIN_WIDTH,(int)PERLIN_HEIGHT};
     PlanetSystem system;
     sf::RenderWindow window(sf::VideoMode(INITIAL_WIDTH,INITIAL_HEIGHT),"Gravity");
 
@@ -86,7 +86,7 @@ int main() {
                 Vec2f perlinLoc = {{loc[0]/(float)INITIAL_WIDTH*PERLIN_WIDTH,
                                     loc[1]/(float)INITIAL_HEIGHT*PERLIN_HEIGHT}};
                 double noise = perlin.octaveNoise(perlinLoc[0],perlinLoc[1]);
-                Planet p{40+noise*60,loc,randomVec(40)};
+                Planet p{(float)(40+noise*60),loc,randomVec(40)};
                 system.addPlanet(p);
             }
         }
